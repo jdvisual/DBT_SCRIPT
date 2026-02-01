@@ -38,7 +38,19 @@ jobs:
       - name: Ensure dbt profiles directory exists
         run: mkdir -p /home/runner/.dbt
 
-      # 5) Write profiles.yml (profile name MUST match dbt_project.yml)
+      # 5) Validate secrets are present (SAFE: prints names only, never values)
+      - name: Validate required Snowflake env vars are present (safe)
+        shell: bash
+        run: |
+          for v in SNOWFLAKE_ACCOUNT SNOWFLAKE_USER SNOWFLAKE_PASSWORD SNOWFLAKE_ROLE SNOWFLAKE_DATABASE SNOWFLAKE_WAREHOUSE SNOWFLAKE_SCHEMA; do
+            if [ -z "${!v}" ]; then
+              echo "Missing/empty env var: $v"
+              exit 1
+            fi
+          done
+          echo "All required Snowflake env vars are present."
+
+      # 6) Write profiles.yml (profile name MUST match dbt_project.yml)
       - name: Write dbt profiles.yml
         shell: bash
         run: |
@@ -59,18 +71,17 @@ jobs:
                 client_session_keep_alive: false
           EOF
 
-      # 6) Debug (safe)
+      # 7) Debug (safe)
       - name: Debug profiles (safe)
         run: |
           ls -la /home/runner/.dbt
           echo "---- profiles.yml (top) ----"
           sed -n '1,40p' /home/runner/.dbt/profiles.yml
 
-      # 7) Install dbt packages
+      # 8) Install dbt packages
       - name: dbt deps
         run: dbt deps --profiles-dir /home/runner/.dbt
 
-      # 8) Run dbt build
+      # 9) Run dbt build
       - name: Run dbt build (CI)
         run: dbt build --target dev --profiles-dir /home/runner/.dbt
-
