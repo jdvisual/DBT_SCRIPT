@@ -23,4 +23,8 @@ jobs:
           dbt deps
 
       - name: Run dbt build (CI)
-        run: dbt build --target dev
+      run: | 
+        dbt build \
+        --profiles-dir profiles \
+        --profile stars_hwdi \
+        --target dev
