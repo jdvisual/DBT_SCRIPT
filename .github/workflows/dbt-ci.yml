@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # dbt profile env vars (recommended names)
       SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
       SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
@@ -19,29 +18,70 @@ jobs:
       SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
 
     steps:
+      # 1) Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2) Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Deterministic fix for the runner missing ~/.dbt
-      - name: Ensure dbt profiles directory exists
-        run: |
-          mkdir -p /home/runner/.dbt
-          ls -la /home/runner
-          ls -la /home/runner/.dbt
-
-      - name: Install dbt + dependencies
+      # 3) Install dbt + adapter
+      - name: Install dbt
         run: |
           python -m pip install --upgrade pip
-          pip install dbt-snowflake
-          dbt --version
-          dbt deps --profiles-dir profiles
+          pip install dbt-core dbt-snowflake
 
-      - name: Run dbt build (CI)
+      # 4) Ensure dbt profiles directory exists
+      - name: Ensure dbt profiles directory exists
+        run: mkdir -p /home/runner/.dbt
+
+      # 5) Validate secrets are present (SAFE: prints names only, never values)
+      - name: Validate required Snowflake env vars are present (safe)
+        shell: bash
         run: |
-          dbt build --profiles-dir profiles --profile stars_hwdi --target dev
+          for v in SNOWFLAKE_ACCOUNT SNOWFLAKE_USER SNOWFLAKE_PASSWORD SNOWFLAKE_ROLE SNOWFLAKE_DATABASE SNOWFLAKE_WAREHOUSE SNOWFLAKE_SCHEMA; do
+            if [ -z "${!v}" ]; then
+              echo "Missing/empty env var: $v"
+              exit 1
+            fi
+          done
+          echo "All required Snowflake env vars are present."
 
+      # 6) Write profiles.yml (profile name MUST match dbt_project.yml)
+      - name: Write dbt profiles.yml
+        shell: bash
+        run: |
+          cat > /home/runner/.dbt/profiles.yml << 'EOF'
+          stars_hwdi:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ${{ secrets.SNOWFLAKE_ROLE }}
+                database: ${{ secrets.SNOWFLAKE_DATABASE }}
+                warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+                schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
+                threads: 4
+                client_session_keep_alive: false
+          EOF
+
+      # 7) Debug (safe)
+      - name: Debug profiles (safe)
+        run: |
+          ls -la /home/runner/.dbt
+          echo "---- profiles.yml (top) ----"
+          sed -n '1,40p' /home/runner/.dbt/profiles.yml
+
+      # 8) Install dbt packages
+      - name: dbt deps
+        run: dbt deps --profiles-dir /home/runner/.dbt
+
+      # 9) Run dbt build
+      - name: Run dbt build (CI)
+        run: dbt build --target dev --profiles-dir /home/runner/.dbt
