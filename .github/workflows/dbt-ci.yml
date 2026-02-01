@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Ensure dbt profiles directory exists
+        run: mkdir -p ~/.dbt
+
       - name: Install dbt
         run: |
           pip install dbt-snowflake
