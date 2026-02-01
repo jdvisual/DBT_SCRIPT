@@ -1,0 +1,132 @@
+[
+  {
+    "macro_span": {
+      "start": {
+        "line": 1,
+        "col": 1,
+        "index": 0
+      },
+      "stop": {
+        "line": 4,
+        "col": 5,
+        "index": 74
+      }
+    },
+    "expanded_span": {
+      "start": {
+        "line": 1,
+        "col": 1,
+        "index": 0
+      },
+      "stop": {
+        "line": 1,
+        "col": 1,
+        "index": 0
+      }
+    }
+  },
+  {
+    "macro_span": {
+      "start": {
+        "line": 13,
+        "col": 8,
+        "index": 212
+      },
+      "stop": {
+        "line": 13,
+        "col": 39,
+        "index": 243
+      }
+    },
+    "expanded_span": {
+      "start": {
+        "line": 10,
+        "col": 8,
+        "index": 138
+      },
+      "stop": {
+        "line": 10,
+        "col": 59,
+        "index": 189
+      }
+    }
+  },
+  {
+    "macro_span": {
+      "start": {
+        "line": 14,
+        "col": 3,
+        "index": 247
+      },
+      "stop": {
+        "line": 14,
+        "col": 41,
+        "index": 285
+      }
+    },
+    "expanded_span": {
+      "start": {
+        "line": 11,
+        "col": 3,
+        "index": 193
+      },
+      "stop": {
+        "line": 18,
+        "col": 1,
+        "index": 371
+      }
+    }
+  },
+  {
+    "macro_span": {
+      "start": {
+        "line": 19,
+        "col": 5,
+        "index": 339
+      },
+      "stop": {
+        "line": 19,
+        "col": 75,
+        "index": 409
+      }
+    },
+    "expanded_span": {
+      "start": {
+        "line": 23,
+        "col": 5,
+        "index": 425
+      },
+      "stop": {
+        "line": 27,
+        "col": 1,
+        "index": 631
+      }
+    }
+  },
+  {
+    "macro_span": {
+      "start": {
+        "line": 38,
+        "col": 3,
+        "index": 737
+      },
+      "stop": {
+        "line": 38,
+        "col": 28,
+        "index": 762
+      }
+    },
+    "expanded_span": {
+      "start": {
+        "line": 46,
+        "col": 3,
+        "index": 959
+      },
+      "stop": {
+        "line": 48,
+        "col": 1,
+        "index": 1024
+      }
+    }
+  }
+]

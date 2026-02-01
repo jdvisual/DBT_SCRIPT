@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: BRONZE
+    tables:
+      - name: members
+      - name: claims
+      - name: rx
+      - name: labs

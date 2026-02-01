@@ -1,0 +1,30 @@
+-- back compat for old kwarg name
+  
+  begin;
+    
+        
+            
+	    
+	    
+            
+        
+    
+
+    
+
+    merge into CHOP_ANALYTICS.CORE_SILVER.silver_gaps__hwdi as DBT_INTERNAL_DEST
+        using CHOP_ANALYTICS.CORE_SILVER.silver_gaps__hwdi__dbt_tmp as DBT_INTERNAL_SOURCE
+        on ((DBT_INTERNAL_SOURCE.gap_id = DBT_INTERNAL_DEST.gap_id))
+
+    
+    when matched then update set
+        "GAP_ID" = DBT_INTERNAL_SOURCE."GAP_ID","MEMBER_ID" = DBT_INTERNAL_SOURCE."MEMBER_ID","PLAN_ID" = DBT_INTERNAL_SOURCE."PLAN_ID","PROVIDER_ID" = DBT_INTERNAL_SOURCE."PROVIDER_ID","MEASUREMENT_YEAR" = DBT_INTERNAL_SOURCE."MEASUREMENT_YEAR","MEASURE_ID" = DBT_INTERNAL_SOURCE."MEASURE_ID","GAP_STATUS" = DBT_INTERNAL_SOURCE."GAP_STATUS","AS_OF_DATE" = DBT_INTERNAL_SOURCE."AS_OF_DATE","DBT_INVOCATION_ID" = DBT_INTERNAL_SOURCE."DBT_INVOCATION_ID"
+    
+
+    when not matched then insert
+        ("GAP_ID", "MEMBER_ID", "PLAN_ID", "PROVIDER_ID", "MEASUREMENT_YEAR", "MEASURE_ID", "GAP_STATUS", "AS_OF_DATE", "DBT_INVOCATION_ID")
+    values
+        ("GAP_ID", "MEMBER_ID", "PLAN_ID", "PROVIDER_ID", "MEASUREMENT_YEAR", "MEASURE_ID", "GAP_STATUS", "AS_OF_DATE", "DBT_INVOCATION_ID")
+
+;
+    commit;

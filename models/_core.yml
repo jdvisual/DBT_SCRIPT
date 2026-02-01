@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: silver_gaps__hwdi
+    description: "Member-level Stars gaps for HWD&I-style measures (example)."
+    columns:
+      - name: gap_id
+        tests:
+          - not_null
+          - unique
+
+      - name: member_id
+        tests:
+          - not_null
+
+      - name: gap_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["OPEN", "CLOSED"]
+

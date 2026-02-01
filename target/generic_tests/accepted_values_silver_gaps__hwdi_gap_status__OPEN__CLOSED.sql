@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="gap_status", model=get_where_subquery(ref('silver_gaps__hwdi')), values=["OPEN","CLOSED"]) }}
