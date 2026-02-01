@@ -9,21 +9,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
+      # 3. Create dbt profiles directory (explicit path)
       - name: Ensure dbt profiles directory exists
-        run: mkdir -p ~/.dbt
+        run: |
+          mkdir -p /home/runner/.dbt
+          ls -la /home/runner
+          ls -la /home/runner/.dbt
 
+      # 4. Install dbt and deps
       - name: Install dbt
         run: |
           pip install dbt-snowflake
-          dbt deps
+          dbt deps --profiles-dir /home/runner/.dbt
 
+      # 5. Run dbt (will now fail at profile, not filesystem)
       - name: Run dbt build (CI)
-        run: dbt build --target dev
+        run: |
+          dbt build --target dev --profiles-dir /home/runner/.dbt
